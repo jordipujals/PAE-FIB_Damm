@@ -2,6 +2,7 @@ import { Form } from './components/Form/Form'
 import {Home} from './components/Home/Home'
 import {useState} from 'react'
 import './App.css'
+import {ParadaManual} from "./ParadaManual.jsx";
 
 function App() {
 
@@ -9,7 +10,7 @@ function App() {
 
   return (
     <div className="App">
-            {user ? <Home /> : <Form setUser={setUser} />}
+            <ParadaManual/>
         </div>
   )
 }
