@@ -1,4 +1,4 @@
-import { Form } from './components/Form/Form'
+import { Form, LoginForm } from './components/Form/LoginForm'
 import {Home} from './components/Home/Home'
 import {useState} from 'react'
 import './App.css'
@@ -9,7 +9,7 @@ function App() {
 
   return (
     <div className="App">
-            {user ? <Home /> : <Form setUser={setUser} />}
+            {user ? <Home /> : <LoginForm setUser={setUser} />}
         </div>
   )
 }

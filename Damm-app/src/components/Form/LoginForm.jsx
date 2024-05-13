@@ -1,7 +1,7 @@
-import "./Form.css";
+import "./LoginForm.css";
 import { useState } from "react";
 
-export function Form({setUser}) {
+export function LoginForm({setUser}) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
