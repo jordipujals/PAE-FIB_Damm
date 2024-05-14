@@ -6,52 +6,25 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title'
-// Generate Order Data
+
+// Generate Truck Data
 function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number,
+  Id: number,
+  Matricula: string,
+  Zona_Ruta: string,
+  Parades_Efectuades: number,
+  Temps_Promig: string,
+  LitrosSubministrats_Total: string,
+  Incidencies: number,
+  Detalls_Camio: string,
 ) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+  return { Id, Matricula, Zona_Ruta, Parades_Efectuades, Temps_Promig, LitrosSubministrats_Total, Incidencies, Detalls_Camio };
 }
 
 const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
+  createData(0, '4522-DPR', 'Lleida-Tarragona', 2, '6h', '540L/1.460L', 0, 'More Details'),
+  createData(1, '5168-GTK', 'Murcia-Alacant', 2, '8h', '600L/1.400L', 1, 'More Details',),
+  createData(2, '3079-JSD', 'Galicia', 3, '5h', '800L/1.200L', 0, 'More Details'),
 ];
 
 function preventDefault(event: React.MouseEvent) {
@@ -61,25 +34,29 @@ function preventDefault(event: React.MouseEvent) {
 export default function Orders() {
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
-      <Table size="small">
+      <Title>Llistat de Camions</Title>
+      <Table size="medium">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Matricula</TableCell>
+            <TableCell>Zona de la Ruta</TableCell>
+            <TableCell>Parades Efectuades</TableCell>
+            <TableCell>Temps Promig</TableCell>
+            <TableCell>L Subministrats / L Totals</TableCell>
+            <TableCell>Incidencies</TableCell>
+            <TableCell align="right">+ Detalls del Camio</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+            <TableRow key={row.Id}>
+              <TableCell>{row.Matricula}</TableCell>
+              <TableCell>{row.Zona_Ruta}</TableCell>
+              <TableCell>{row.Parades_Efectuades}</TableCell>
+              <TableCell>{row.Temps_Promig}</TableCell>
+              <TableCell>{row.LitrosSubministrats_Total}</TableCell>
+              <TableCell>{row.Incidencies}</TableCell>
+              <TableCell align="right">{row.Detalls_Camio}</TableCell>
             </TableRow>
           ))}
         </TableBody>
