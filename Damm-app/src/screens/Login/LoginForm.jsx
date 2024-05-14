@@ -70,10 +70,10 @@ export function LoginForm({ setUser }) {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 autoFocus
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
