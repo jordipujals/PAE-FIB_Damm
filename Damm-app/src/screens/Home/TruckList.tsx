@@ -70,7 +70,7 @@ return (
         ),
       }}
     />
-    <TableContainer style={{ maxHeight: '350px', overflowY: 'auto' }}>
+    <TableContainer style={{ maxHeight: '300px', overflowY: 'auto' }}>
       <Table size="medium">
         <TableHead>
           <TableRow>

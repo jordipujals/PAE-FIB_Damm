@@ -8,20 +8,16 @@ function preventDefault(event: React.MouseEvent) {
 }
 
 export default function GeneralInfo() {
-  return (
-    <React.Fragment>
-      <Title>Recent Deposits</Title>
-      <Typography component="p" variant="h4">
-        $3,024.00
-      </Typography>
-      <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on 15 March, 2019
-      </Typography>
-      <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View balance
-        </Link>
-      </div>
-    </React.Fragment>
-  );
+    return (
+        <React.Fragment>
+        <Title>Estadistiques Generals</Title>
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          <Typography component="p">Tiempo de ruta promedio: [1]</Typography>
+          <Typography component="p">Número de paradas diarias promedio: [1]</Typography>
+          <Typography component="p">Kilómetros promedio: [1]</Typography>
+          <Typography component="p">Entregados: [1]</Typography>
+          <Typography component="p">Sobrantes: [1]</Typography>
+        </div>
+      </React.Fragment>
+      );
 }
