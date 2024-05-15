@@ -1,11 +1,7 @@
-import * as React from 'react';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Title from './Title'
+import React, { useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import Title from './Title';
 
 // Generate Truck Data
 function createData(
@@ -22,48 +18,86 @@ function createData(
 }
 
 const rows = [
-  createData(0, '4522-DPR', 'Lleida-Tarragona', 2, '6h', '540L/1.460L', 0, 'More Details'),
-  createData(1, '5168-GTK', 'Murcia-Alacant', 2, '8h', '600L/1.400L', 1, 'More Details',),
-  createData(2, '3079-JSD', 'Galicia', 3, '5h', '800L/1.200L', 0, 'More Details'),
+  createData(0, '4522-DPR', 'Lleida-Tarragona', 2, '6h', '540L/1.460L', 0, '+ Mes Detalls'),
+  createData(1, '5168-GTK', 'Murcia-Alacant', 2, '8h', '600L/1.400L', 1, '+ Mes Detalls'),
+  createData(2, '3079-JSD', 'Galicia', 3, '5h', '800L/1.200L', 0, '+ Mes Detalls'),
+  createData(3, '1245-ABC', 'Barcelona', 1, '4h', '400L/1.200L', 0, '+ Mes Detalls'),
+  createData(4, '9876-XYZ', 'Valencia', 2, '7h', '700L/1.300L', 2, '+ Mes Detalls'),
+  createData(5, '7890-QWE', 'Madrid', 4, '3h', '300L/1.000L', 1, '+ Mes Detalls'),
+  createData(6, '2345-OPQ', 'Sevilla', 3, '6h', '600L/1.800L', 0, '+ Mes Detalls'),
+  createData(7, '6789-ZXC', 'Bilbao', 2, '5h', '500L/1.500L', 1, '+ Mes Detalls'),
+  createData(8, '1357-DEF', 'Alicante', 1, '2h', '200L/800L', 0, '+ Mes Detalls'),
+  createData(9, '2468-GHI', 'Malaga', 2, '7h', '700L/1.600L', 1, '+ Mes Detalls'),
 ];
 
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function Orders() {
-  return (
-    <React.Fragment>
-      <Title>Llistat de Camions</Title>
+export default function TruckList() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredRows = rows.filter((row) =>
+    searchTerm.trim() === '' ||
+    (
+        row.Matricula.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+        row.Zona_Ruta.toLowerCase().startsWith(searchTerm.toLowerCase())
+    )
+);
+
+
+return (
+  <React.Fragment>
+    <Title>Llistat de Camions</Title>
+    <TextField
+      type="text"
+      placeholder="Buscar per matrícula o zona de ruta"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      fullWidth
+      style={{ marginBottom: '10px' }}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton>
+              <SearchIcon />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+    <TableContainer style={{ maxHeight: '350px', overflowY: 'auto' }}>
       <Table size="medium">
         <TableHead>
           <TableRow>
-            <TableCell>Matricula</TableCell>
-            <TableCell>Zona de la Ruta</TableCell>
-            <TableCell>Parades Efectuades</TableCell>
-            <TableCell>Temps Promig</TableCell>
-            <TableCell>L Subministrats / L Totals</TableCell>
-            <TableCell>Incidencies</TableCell>
-            <TableCell align="right">+ Detalls del Camio</TableCell>
+          <TableCell align="center">Matricula</TableCell>
+              <TableCell align="center">Zona de la Ruta</TableCell>
+              <TableCell align="center">Parades Efectuades</TableCell>
+              <TableCell align="center">Temps Promig</TableCell>
+              <TableCell align="center">L Subministrats / L Totals</TableCell>
+              <TableCell align="center">Incidencies</TableCell>
+              <TableCell align="right">Detalls del Camio</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {filteredRows.map((row) => (
             <TableRow key={row.Id}>
-              <TableCell>{row.Matricula}</TableCell>
-              <TableCell>{row.Zona_Ruta}</TableCell>
-              <TableCell>{row.Parades_Efectuades}</TableCell>
-              <TableCell>{row.Temps_Promig}</TableCell>
-              <TableCell>{row.LitrosSubministrats_Total}</TableCell>
-              <TableCell>{row.Incidencies}</TableCell>
-              <TableCell align="right">{row.Detalls_Camio}</TableCell>
+              <TableCell align="center">{row.Matricula}</TableCell>
+                <TableCell align="center">{row.Zona_Ruta}</TableCell>
+                <TableCell align="center">{row.Parades_Efectuades}</TableCell>
+                <TableCell align="center">{row.Temps_Promig}</TableCell>
+                <TableCell align="center">{row.LitrosSubministrats_Total}</TableCell>
+                <TableCell align="center" >{row.Incidencies}</TableCell>
+                <TableCell align="right">{row.Detalls_Camio}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
-    </React.Fragment>
-  );
+    </TableContainer>
+  </React.Fragment>
+);
 }
