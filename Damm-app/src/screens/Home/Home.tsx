@@ -6,7 +6,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
-import { mainListItems, secondaryListItems } from './ListItems';
+import { mainListItems } from './ListItems';
 import GeneralInfo from './GeneralInfo';
 import Title from './Title';
 import Chart from './Chart';
@@ -126,8 +126,7 @@ export function Home() {
           <Divider />
           <List component="nav">
             {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {/*Afegir mes ListItems si es necesari*/}
           </List>
         </Drawer>
         <Box
@@ -145,13 +144,13 @@ export function Home() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* GeneralData */}
-              <Grid item xs={12} md={4} lg={3}>
+              <Grid item xs={12} md={5} lg={4}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
                   <GeneralInfo />
                 </Paper>
               </Grid>
               {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} md={7} lg={8}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
                   <Chart />
                 </Paper>

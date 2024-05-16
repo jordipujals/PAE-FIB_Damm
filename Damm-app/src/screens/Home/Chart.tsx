@@ -14,14 +14,14 @@ function createData(
 
 const data = [
   createData('00:00', 0),
-  createData('03:00', 300),
-  createData('06:00', 600),
-  createData('09:00', 800),
-  createData('12:00', 1500),
-  createData('15:00', 2000),
-  createData('18:00', 2400),
-  createData('21:00', 2400),
-  createData('24:00'),
+  createData('03:00', 800),
+  createData('06:00', 1200),
+  createData('09:00', 4000),
+  createData('12:00', 9000),
+  createData('15:00', 10300),
+  createData('18:00', 13000),
+  createData('21:00', 16700),
+  createData('24:00', 23300),
 ];
 
 export default function Chart() {
@@ -29,7 +29,7 @@ export default function Chart() {
 
   return (
     <React.Fragment>
-      <Title>Today</Title>
+      <Title>Gràfic Diari</Title>
       <div style={{ width: '100%', flexGrow: 1, overflow: 'hidden' }}>
         <LineChart
           dataset={data}
@@ -37,7 +37,7 @@ export default function Chart() {
             top: 16,
             right: 20,
             left: 70,
-            bottom: 30,
+            bottom: 20,
           }}
           xAxis={[
             {
@@ -49,14 +49,14 @@ export default function Chart() {
           ]}
           yAxis={[
             {
-              label: 'Sales ($)',
+              label: 'Litres subministrats',
               labelStyle: {
-                ...(theme.typography.body1 as ChartsTextStyle),
+                ...(theme.typography.body2 as ChartsTextStyle),
                 fill: theme.palette.text.primary,
               },
               tickLabelStyle: theme.typography.body2 as ChartsTextStyle,
-              max: 2500,
-              tickNumber: 3,
+              max: 25000,
+              tickNumber: 5,
             },
           ]}
           series={[
@@ -70,7 +70,7 @@ export default function Chart() {
             [`.${axisClasses.root} line`]: { stroke: theme.palette.text.secondary },
             [`.${axisClasses.root} text`]: { fill: theme.palette.text.secondary },
             [`& .${axisClasses.left} .${axisClasses.label}`]: {
-              transform: 'translateX(-25px)',
+              transform: 'translateX(-30px)',
             },
           }}
         />
