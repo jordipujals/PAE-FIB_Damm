@@ -1,5 +1,5 @@
-import { Form, LoginForm } from './components/Form/LoginForm'
-import {Home} from './components/Home/Home'
+import { LoginForm } from './screens/Login/LoginForm'
+import {Home} from './screens/Home/Home'
 import {useState} from 'react'
 import './App.css'
 
