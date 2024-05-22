@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, InputAdornment, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import Title from './Title';
+import Title from '../../components/Title';
 
 // Generate Truck Data
 function createData(

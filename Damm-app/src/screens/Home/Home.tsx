@@ -6,9 +6,9 @@ import MuiDrawer from '@mui/material/Drawer';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
-import { mainListItems } from './ListItems';
+import { mainListItems } from '../../components/ListItems';
 import GeneralInfo from './GeneralInfo';
-import Title from './Title';
+import Title from '../../components/Title';
 import Chart from './Chart';
 import TruckList from './TruckList';
 

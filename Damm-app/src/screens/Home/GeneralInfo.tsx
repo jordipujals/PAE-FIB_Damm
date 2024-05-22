@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Paper, Grid, ButtonGroup, Button, Box } from '@mui/material';
 import { styled, useTheme } from '@mui/system';
-import Title from './Title';
+import Title from '../../components/Title';
 
 const GeneralInfo = () => {
   const [interval, setInterval] = useState('Diari'); 

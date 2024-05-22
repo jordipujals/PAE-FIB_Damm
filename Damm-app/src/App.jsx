@@ -2,7 +2,8 @@ import { LoginForm } from './screens/Login/LoginForm'
 import {Home} from './screens/Home/Home'
 import {useState} from 'react'
 import './App.css'
-import {ParadaManual} from "./ParadaManual.jsx";
+import {ParadaManual} from "./screens/ParadaManual/ParadaManual.jsx";
+import AppLayout from "./components/AppLayout.jsx";
 
 function App() {
 
@@ -10,7 +11,9 @@ function App() {
 
   return (
     <div className="App">
-        <ParadaManual/>
+        <AppLayout>
+            <ParadaManual/>
+        </AppLayout>
         </div>
   )
 }
