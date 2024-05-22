@@ -1,5 +1,5 @@
-import { Form } from './components/Form/Form'
-import {Home} from './components/Home/Home'
+import { LoginForm } from './screens/Login/LoginForm'
+import {Home} from './screens/Home/Home'
 import {useState} from 'react'
 import './App.css'
 import {ParadaManual} from "./ParadaManual.jsx";
@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div className="App">
-            <ParadaManual/>
+        <ParadaManual/>
         </div>
   )
 }
