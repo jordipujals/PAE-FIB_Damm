@@ -14,7 +14,7 @@ import {
     FormControl,
     InputLabel
 } from "@mui/material";
-import Title from "../../components/Title.tsx";
+import Title from "../../components/Title";
 
 export function ParadaManual() {
     const [searchOption, setSearchOption] = React.useState('');
@@ -55,7 +55,7 @@ export function ParadaManual() {
                                         </Grid>
                                         <Grid container item xs={6}>
                                             <Typography sx={{ fontSize: 14, fontWeight: 'bold' }} color="text.primary">
-                                                Telefon de contacte
+                                                Telefon de contacte:
                                             </Typography>
                                         </Grid>
                                         <Grid container item xs={6}>
@@ -89,7 +89,7 @@ export function ParadaManual() {
                                         </Grid>
                                         <Grid container item xs={6}>
                                             <Typography sx={{ fontSize: 14, fontWeight: 'bold' }} color="text.primary">
-                                                Temps a la seguent parada
+                                                Temps a la seguent parada:
                                             </Typography>
                                         </Grid>
                                         <Grid container item xs={6}>
@@ -129,8 +129,8 @@ export function ParadaManual() {
                                             </FormControl>
                                         </Grid>
                                         <Grid container item xs={12}>
-                                            <Card sx={{ textAlign: "start", width: 1, borderRadius: 2, mb:2 }} variant="outlined">
-                                                <CardHeader subheader="Dades del local seleccionat"/>
+                                            <Card sx={{ textAlign: "start", width: 1, borderRadius: 2, mb: 2 }} variant="outlined">
+                                                <CardHeader subheader="Dades del local seleccionat" />
                                                 <CardContent>
                                                     <Grid container justifyContent="start" alignItems="start" spacing={1}>
                                                         <Grid container item xs={6}>
@@ -157,7 +157,7 @@ export function ParadaManual() {
                                                                 </Grid>
                                                                 <Grid container item xs={6}>
                                                                     <Typography sx={{ fontSize: 14, fontWeight: 'bold' }} color="text.primary">
-                                                                        Telefon de contacte
+                                                                        Telefon de contacte:
                                                                     </Typography>
                                                                 </Grid>
                                                                 <Grid container item xs={6}>
@@ -195,7 +195,7 @@ export function ParadaManual() {
                                                 </CardContent>
                                             </Card>
                                             <Card sx={{ textAlign: "start", width: 1, borderRadius: 2, mb: 2 }} variant="outlined">
-                                                <CardHeader subheader="Dades de la ruta modificada"/>
+                                                <CardHeader subheader="Dades de la ruta modificada" />
                                                 <CardContent>
                                                     <Grid container justifyContent="start" alignItems="start" spacing={1}>
                                                         <Grid container item xs={6}>
@@ -259,9 +259,7 @@ export function ParadaManual() {
                                     <Grid container item xs={6}>
                                         <Grid container justifyContent="start" alignItems="start" spacing={1} padding={1}>
                                             <Card sx={{ borderRadius: 2 }}>
-                                                <CardHeader
-                                                    subheader="Mapa de la nova ruta"
-                                                />
+                                                <CardHeader subheader="Mapa de la nova ruta" />
                                                 <CardMedia
                                                     component="img"
                                                     src="https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg"

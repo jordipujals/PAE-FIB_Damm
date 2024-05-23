@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CssBaseline, Box, Toolbar, List, Typography, Divider, IconButton, Badge, Container, Grid,  Paper } from '@mui/material';
+import { CssBaseline, Box, Toolbar, List, Typography, Divider, IconButton, Badge, Container, Grid, Paper } from '@mui/material';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
@@ -11,7 +11,6 @@ import GeneralInfo from './GeneralInfo';
 import Title from '../../components/Title';
 import Chart from './Chart';
 import TruckList from './TruckList';
-
 
 const drawerWidth: number = 240;
 
@@ -64,12 +63,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const defaultTheme = createTheme();
-  
-export function Home() {
+
+interface HomeProps {
+  setSelectedTruck: (truck: any) => void;
+}
+
+export function Home({ setSelectedTruck }: HomeProps) {
   const [open, setOpen] = React.useState(true);
 
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleTruckClick = (truck: any) => {
+    setSelectedTruck(truck);
   };
 
   return (
@@ -158,7 +165,7 @@ export function Home() {
               {/* Truck List */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <TruckList />
+                  <TruckList onTruckClick={handleTruckClick} />
                 </Paper>
               </Grid>
             </Grid>
@@ -168,4 +175,3 @@ export function Home() {
     </ThemeProvider>
   );
 }
-  
