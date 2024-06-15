@@ -1,20 +1,7 @@
 import React from 'react';
-import {
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardMedia,
-    Container,
-    Grid,
-    Stack,
-    Typography,
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel
-} from "@mui/material";
+import {Button, Card, CardContent, CardHeader, CardMedia, Container, Grid, Stack, Typography, MenuItem, Select, FormControl, InputLabel} from "@mui/material";
 import Title from "../../components/Title";
+import { mainListItems } from '../../components/ListItems';
 
 export function ParadaManual() {
     const [searchOption, setSearchOption] = React.useState('');

@@ -1,8 +1,11 @@
+// src/App.jsx
+
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import { LoginForm } from './screens/Login/LoginForm';
 import { Home } from './screens/Home/Home';
 import TruckDetails from './screens/TruckDetails/TruckDetails';
 import NewRoute from './screens/NewRoute/NewRoute';
+import RouteDetail from './screens/NewRoute/RouteDetail';
 import { ParadaManual } from './screens/ParadaManual/ParadaManual';
 import { useState } from 'react';
 import './App.css';
@@ -24,6 +27,7 @@ function App() {
           <Route path="/home" element={<Home setSelectedTruck={setSelectedTruck} />} />
           <Route path="/truck-details" element={<TruckDetails truck={selectedTruck} />} />
           <Route path="/new-route" element={<NewRoute />} />
+          <Route path="/route-detail/:id" element={<RouteDetail />} />
           <Route path="/manual-stop" element={<ParadaManual />} />
         </Routes>
       ) : (

@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CssBaseline, Box, Toolbar, Typography, Container, Grid, Paper,
-  TextField, Button, Divider, IconButton, List
+  Button, Divider, IconButton, List, FormControl, InputLabel, Select, MenuItem,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox
 } from '@mui/material';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MenuIcon from '@mui/icons-material/Menu';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { mainListItems } from '../../components/ListItems';
 import Title from '../../components/Title';
-import ProvinceList from './ProvinceList';
-import BarList, { bars } from './BarList';
-import DesignedRoutes, { routes } from './DesignedRoutes';
+import provinces from '../../components/ProvinceList';
+import BarList from '../../components/BarList';
+import { availableTrucks } from '../../components/TruckList';
 
 const drawerWidth: number = 240;
 
@@ -21,15 +24,32 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
+interface Location {
+  id: string;
+  name: string;
+  province: string;
+  city: string;
+  litDem: string;
+  billingLatitude: string;
+  billingLongitude: string;
+  obertura: string;
+  tancament: string;
+  status?: string;
+  postalCode?: string;
+  idSAP?: string;
+  distributor?: string;
+  type?: string;
+}
+
 interface Route {
   id: number;
-  plate: string;
-  zone: string;
-  stops: number;
-  startTime: string;
-  endTime: string;
-  length: string;
-  beerMargin: string;
+  province: string;
+  stops: Location[];
+  truckCapacity: number;
+  beerLoad: number;
+  remainingCapacity: number;
+  truckPlate: string;
+  routeTime: string;
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -80,44 +100,162 @@ const defaultTheme = createTheme();
 
 const NewRoute = () => {
   const [open, setOpen] = useState(true);
-  const [maxLength, setMaxLength] = useState('');
-  const [maxDuration, setMaxDuration] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [maxBeer, setMaxBeer] = useState('');
-  const [minStops, setMinStops] = useState('');
-  const [maxStops, setMaxStops] = useState('');
-  const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
-  const [designedRoutes, setDesignedRoutes] = useState<Route[]>([]);
-  const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
-  const [selectedBars, setSelectedBars] = useState<any[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState(() => localStorage.getItem('selectedProvince') || '');
+  const [filteredBars, setFilteredBars] = useState<Location[]>([]);
+  const [designedRoutes, setDesignedRoutes] = useState<Route[]>(() => JSON.parse(localStorage.getItem('designedRoutes') || '[]'));
+  const [selectedRoutes, setSelectedRoutes] = useState<number[]>([]);
+  const [usedTruckIndices, setUsedTruckIndices] = useState<number[]>([]);
+  const [showNoProvinceSelectedMessage, setShowNoProvinceSelectedMessage] = useState(false);
+  const [showNoBarsMessage, setShowNoBarsMessage] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedTruckIndices = JSON.parse(localStorage.getItem('usedTruckIndices') || '[]');
+    setUsedTruckIndices(storedTruckIndices);
+  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const goBack = () => {
+    navigate('/home');
+  };
+
+  const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const toRad = (x: number) => (x * Math.PI) / 180;
+    const R = 6371; // Radi de la Terra en km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const getNextTruck = (index: number) => {
+    if (index >= availableTrucks.length) {
+      throw new Error('No queden més camions disponibles');
+    }
+    return availableTrucks[index];
+  };
+
+  const calculateRoutes = (bars: Location[]) => {
+    const maxTruckCapacity = 5000;
+    const minTruckCapacity = 2000;
+    const routes: Route[] = [];
+    let truckIndex = 0;
+
+    const groupedByProvince = bars.reduce((acc, bar) => {
+      if (!acc[bar.province]) {
+        acc[bar.province] = [];
+      }
+      acc[bar.province].push(bar);
+      return acc;
+    }, {} as Record<string, Location[]>);
+
+    const createRoute = (provinceBars: Location[], routeTime: string) => {
+      let currentRoute: Location[] = [];
+      let currentLoad = 0;
+
+      provinceBars.forEach((bar, i) => {
+        const barLoad = parseInt(bar.litDem);
+
+        if (currentLoad + barLoad <= maxTruckCapacity) {
+          currentRoute.push(bar);
+          currentLoad += barLoad;
+        } else {
+          const routeCapacity = currentLoad <= minTruckCapacity ? minTruckCapacity : maxTruckCapacity;
+          const truck = getNextTruck(truckIndex++);
+          routes.push({
+            id: routes.length + 1,
+            province: bar.province,
+            stops: currentRoute,
+            truckCapacity: routeCapacity,
+            beerLoad: currentLoad,
+            remainingCapacity: routeCapacity - currentLoad,
+            truckPlate: truck.matricula,
+            routeTime
+          });
+          currentRoute = [bar];
+          currentLoad = barLoad;
+        }
+      });
+
+      if (currentRoute.length > 0) {
+        const routeCapacity = currentLoad <= minTruckCapacity ? minTruckCapacity : maxTruckCapacity;
+        const truck = getNextTruck(truckIndex++);
+        routes.push({
+          id: routes.length + 1,
+          province: currentRoute[0].province,
+          stops: currentRoute,
+          truckCapacity: routeCapacity,
+          beerLoad: currentLoad,
+          remainingCapacity: routeCapacity - currentLoad,
+          truckPlate: truck.matricula,
+          routeTime
+        });
+      }
+    };
+
+    if (selectedProvince && selectedProvince !== "") {
+      const provinceBars = groupedByProvince[selectedProvince] || [];
+      if (provinceBars.length > 0) {
+        const morningBars = provinceBars.filter(bar => bar.obertura >= '08:00' && bar.tancament <= '14:00');
+        const afternoonBars = provinceBars.filter(bar => bar.obertura >= '15:00' && bar.tancament <= '21:00');
+        createRoute(morningBars, '08:00 - 14:00');
+        createRoute(afternoonBars, '15:00 - 21:00');
+        setShowNoBarsMessage(false);
+      } else {
+        setShowNoBarsMessage(true);
+      }
+    } else {
+      if (Object.keys(groupedByProvince).length > 0) {
+        Object.keys(groupedByProvince).forEach(province => {
+          const provinceBars = groupedByProvince[province];
+          if (provinceBars.length > 0) {
+            const morningBars = provinceBars.filter(bar => bar.obertura >= '08:00' && bar.tancament <= '14:00');
+            const afternoonBars = provinceBars.filter(bar => bar.obertura >= '15:00' && bar.tancament <= '21:00');
+            createRoute(morningBars, '08:00 - 14:00');
+            createRoute(afternoonBars, '15:00 - 21:00');
+          }
+        });
+        setShowNoBarsMessage(false);
+      } else {
+        setShowNoBarsMessage(true);
+      }
+    }
+
+    setDesignedRoutes(routes);
+    localStorage.setItem('designedRoutes', JSON.stringify(routes));
+  };
+
   const handleDesignRoutes = () => {
-    // Filtrat de les rutes basat en els filtres aplicats
-    const filteredRoutes = routes.filter((route) => {
-      const routeEndTime = new Date(route.endTime.replace(' - ', 'T')).getTime();
-      const filterEndTime = new Date(endDate).getTime();
-      const length = parseFloat(route.length.replace('Km', ''));
-      const beerMargin = parseFloat(route.beerMargin.replace('L', ''));
+    setShowNoProvinceSelectedMessage(false);
+    setShowNoBarsMessage(false);
+    setDesignedRoutes([]); // Buidar les rutes dissenyades abans de mostrar els missatges
+    if (selectedProvince === "") {
+      setShowNoProvinceSelectedMessage(true);
+      calculateRoutes(filteredBars); // Continuar dissenyant rutes fins i tot si no es selecciona cap província
+    } else {
+      calculateRoutes(filteredBars);
+    }
+  };
 
-      const barProvinces = selectedBars.map(bar => bar.province);
+  const handleRouteSelection = (routeId: number) => {
+    setSelectedRoutes(prevSelected =>
+      prevSelected.includes(routeId)
+        ? prevSelected.filter(id => id !== routeId)
+        : [...prevSelected, routeId]
+    );
+  };
 
-      const provincesMatch = selectedProvinces.length === 0 || selectedProvinces.some(province => route.zone.includes(province));
-      const barsMatch = selectedBars.length === 0 || barProvinces.some(province => route.zone.includes(province));
-      const lengthMatch = maxLength === '' || length <= parseFloat(maxLength);
-      const endDateMatch = endDate === '' || routeEndTime <= filterEndTime;
-      const beerMatch = maxBeer === '' || beerMargin <= parseFloat(maxBeer);
-      const minStopsMatch = minStops === '' || route.stops >= parseInt(minStops);
-      const maxStopsMatch = maxStops === '' || route.stops <= parseInt(maxStops);
-
-      return provincesMatch && barsMatch && lengthMatch && endDateMatch && beerMatch && minStopsMatch && maxStopsMatch;
-    });
-
-    setDesignedRoutes(filteredRoutes);
+  const handleProvinceChange = (event: SelectChangeEvent<string>) => {
+    const province = event.target.value as string;
+    setSelectedProvince(province);
+    localStorage.setItem('selectedProvince', province);
   };
 
   return (
@@ -134,6 +272,9 @@ const NewRoute = () => {
               sx={{ marginRight: '36px', ...(open && { display: 'none' }) }}
             >
               <MenuIcon />
+            </IconButton>
+            <IconButton edge="start" color="inherit" aria-label="go back" onClick={goBack}>
+              <ArrowBackIcon />
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
               Afegir una nova ruta
@@ -172,68 +313,24 @@ const NewRoute = () => {
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                   <Title>Configuració de la ruta</Title>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Longitud màxima de la ruta (km)"
-                        fullWidth
-                        value={maxLength}
-                        onChange={(e) => setMaxLength(e.target.value)}
-                      />
+                    <Grid item xs={12} sm={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>Selecciona una província</InputLabel>
+                        <Select
+                          value={selectedProvince}
+                          onChange={handleProvinceChange}
+                        >
+                          <MenuItem value=""><em>Totes</em></MenuItem>
+                          {provinces.map((province) => (
+                            <MenuItem key={province} value={province}>{province}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Duració màxima de la ruta (min)"
-                        fullWidth
-                        value={maxDuration}
-                        onChange={(e) => setMaxDuration(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Data límit de fi de la ruta"
-                        fullWidth
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        type="datetime-local"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="L max de cervesa a reomplir (L)"
-                        fullWidth
-                        value={maxBeer}
-                        onChange={(e) => setMaxBeer(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Nombre mínim de parades"
-                        fullWidth
-                        value={minStops}
-                        onChange={(e) => setMinStops(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Nombre màxim de parades"
-                        fullWidth
-                        value={maxStops}
-                        onChange={(e) => setMaxStops(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Typography variant="h6">Llistat de províncies</Typography>
-                      <Paper sx={{ maxHeight: 200, overflow: 'auto' }}>
-                        <ProvinceList selectedProvinces={selectedProvinces} setSelectedProvinces={setSelectedProvinces} />
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={12}>
                       <Typography variant="h6">Llistat de bars/locals</Typography>
-                      <Paper sx={{ maxHeight: 200, overflow: 'auto' }}>
-                        <BarList selectedBars={selectedBars} setSelectedBars={setSelectedBars} />
+                      <Paper sx={{ maxHeight: 300, overflow: 'auto' }}>
+                        <BarList selectedProvince={selectedProvince} setFilteredBars={setFilteredBars} />
                       </Paper>
                     </Grid>
                   </Grid>
@@ -245,13 +342,68 @@ const NewRoute = () => {
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', maxHeight: 300, overflow: 'auto' }}>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', maxHeight: 500, overflow: 'auto' }}>
                   <Title>Rutes dissenyades</Title>
-                  <DesignedRoutes
-                    routes={designedRoutes}
-                    selectedRoute={selectedRoute}
-                    setSelectedRoute={setSelectedRoute}
-                  />
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Selecciona</TableCell>
+                          <TableCell>Província</TableCell>
+                          <TableCell>Numero de parades</TableCell>
+                          <TableCell>Litres de cervesa que subministrarà</TableCell>
+                          <TableCell>Litres de cervesa que quedaran</TableCell>
+                          <TableCell>Capacitat del camió</TableCell>
+                          <TableCell>Matrícula del camió</TableCell>
+                          <TableCell>Horari de la Ruta</TableCell>
+                          <TableCell>Detall de la ruta</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {designedRoutes.length > 0 && designedRoutes.map((route) => (
+                          <TableRow key={route.id}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedRoutes.includes(route.id)}
+                                onChange={() => handleRouteSelection(route.id)}
+                              />
+                            </TableCell>
+                            <TableCell>{route.province}</TableCell>
+                            <TableCell>{route.stops.length}</TableCell>
+                            <TableCell>{route.beerLoad}</TableCell>
+                            <TableCell>{route.remainingCapacity}</TableCell>
+                            <TableCell>{route.truckCapacity} L</TableCell>
+                            <TableCell>{route.truckPlate}</TableCell>
+                            <TableCell>{route.routeTime}</TableCell>
+                            <TableCell>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => navigate(`/route-detail/${route.id}`)}
+                              >
+                                Veure detall
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {designedRoutes.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={9}>
+                              {showNoProvinceSelectedMessage ? (
+                                <Typography variant="h6" align="center">
+                                  Selecciona una província per a poder dissenyar les rutes de repartiment.
+                                </Typography>
+                              ) : showNoBarsMessage ? (
+                                <Typography variant="h6" align="center">
+                                  No s'ha pogut generar cap ruta per la província seleccionada.
+                                </Typography>
+                              ) : null}
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Paper>
               </Grid>
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>

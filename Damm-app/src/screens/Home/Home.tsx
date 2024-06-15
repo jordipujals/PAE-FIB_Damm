@@ -10,7 +10,7 @@ import { mainListItems } from '../../components/ListItems';
 import GeneralInfo from './GeneralInfo';
 import Title from '../../components/Title';
 import Chart from './Chart';
-import TruckList from './TruckList';
+import TruckList from '../../components/TruckList';
 
 const drawerWidth: number = 240;
 
