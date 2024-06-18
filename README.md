@@ -1,4 +1,4 @@
-PAE - FIB
+PAE - FIB Projecte 2023-2024 Q2
 ---------------
 Equip format per: Martí Paulet, Andrei-Constantin Popa, Jordi Pujals i Marc Quel
 
