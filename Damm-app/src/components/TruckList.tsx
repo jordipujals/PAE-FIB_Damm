@@ -90,16 +90,16 @@ function createData(
 }
 
 const rows = [
-  createData(0, '4522-DPR', 'Lleida', 3, '6h', '460L/1.540L', 0, 'Més detalls'),
-  createData(1, '5168-GTK', 'Murcia', 2, '8h', '600L/1.400L', 1, 'Més detalls'),
-  createData(2, '3079-JSD', 'Galicia', 3, '5h', '800L/1.200L', 0, 'Més detalls'),
-  createData(3, '1245-ABC', 'Barcelona', 1, '4h', '4.000L/1.000L', 0, 'Més detalls'),
-  createData(4, '9876-XYZ', 'Valencia', 2, '7h', '3.500L/1.500L', 2, 'Més detalls'),
-  createData(5, '7890-QWE', 'Madrid', 3, '3h', '1.000L/1.000L', 1, 'Més detalls'),
-  createData(6, '2345-OPQ', 'Sevilla', 3, '6h', '1.200L/3.800L', 0, 'Més detalls'),
-  createData(7, '6789-ZXC', 'Bilbao', 3, '4h', '1.300L/700L', 1, 'Més detalls'),
-  createData(8, '1357-DEF', 'Alicante', 1, '2h', '500L/1.500L', 0, 'Més detalls'),
-  createData(9, '2468-GHI', 'Malaga', 2, '7h', '1.400L/3.600L', 1, 'Més detalls'),
+  createData(0, '2679-BRQ', 'Barcelona', 1, '2h 20min', '2.516L/2.484L', 0, 'Més detalls'),
+  createData(1, '4522-DPR', 'Lleida', 1, '2h 15min', '473L/1.527L', 0, 'Més detalls'),
+  createData(2, '5168-GTK', 'Murcia', 2, '3h 10min', '643L/1.457L', 1, 'Més detalls'),
+  createData(3, '3079-JSD', 'Galicia', 0, '5h 50min', '0L/2.000L', 0, 'Més detalls'),
+  createData(4, '9876-XYZ', 'Valencia', 0, '4h 5min', '0L/5.000L', 2, 'Més detalls'),
+  createData(5, '7890-QWE', 'Madrid', 1, '1h 45min', '1.023L/977L', 1, 'Més detalls'),
+  createData(6, '2345-OPQ', 'Sevilla', 2, '5h 25min', '1.237L/3.763L', 0, 'Més detalls'),
+  createData(7, '6789-ZXC', 'Bilbao', 1, '4h 30min', '1.325L/675L', 1, 'Més detalls'),
+  createData(8, '1357-DEF', 'Alicante', 1, '2h 55min', '517L/1.483L', 0, 'Més detalls'),
+  createData(9, '2468-GHI', 'Malaga', 2, '3h 20min', '1.418L/3.582L', 1, 'Més detalls'),
 ];
 
 export default function TruckList({ onTruckClick }: TruckListProps) {

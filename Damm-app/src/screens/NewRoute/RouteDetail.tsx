@@ -1,6 +1,5 @@
-// RouteDetail.tsx
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import {
   CssBaseline, Box, Toolbar, Typography, Container, Grid, Paper,
   IconButton, List, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
@@ -12,6 +11,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { mainListItems } from '../../components/ListItems';
 import Title from '../../components/Title';
+import TruckMap from './RouteMap';
 
 const drawerWidth: number = 240;
 
@@ -68,6 +68,8 @@ const defaultTheme = createTheme();
 const RouteDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { stops, coords, routeTime } = state;
   const routeId = parseInt(id ?? '0', 10);
   
   const route = JSON.parse(localStorage.getItem('designedRoutes') || '[]').find((r: any) => r.id === routeId);
@@ -130,7 +132,7 @@ const RouteDetail = () => {
                   <Typography variant="body1"><strong>Capacitat del camió:</strong> {route.truckCapacity} L</Typography>
                   <Typography variant="body1"><strong>Litres subministrats:</strong> {route.beerLoad} L</Typography>
                   <Typography variant="body1"><strong>Litres restants:</strong> {route.remainingCapacity} L</Typography>
-                  <Typography variant="body1"><strong>Horari de la Ruta:</strong> {route.routeTime}</Typography>
+                  <Typography variant="body1"><strong>Horari de la Ruta:</strong> {routeTime}</Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12}>
@@ -147,7 +149,7 @@ const RouteDetail = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {route.stops.map((stop: any, index: number) => (
+                        {stops.map((stop: any, index: number) => (
                           <TableRow key={index}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{stop.name}</TableCell>
@@ -158,6 +160,11 @@ const RouteDetail = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  <TruckMap coords={coords} />
                 </Paper>
               </Grid>
             </Grid>

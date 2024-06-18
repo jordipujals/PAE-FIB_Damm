@@ -9,6 +9,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import HomeIcon from '@mui/icons-material/Home';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import MapIcon from '@mui/icons-material/Map';
+import SmartphoneIcon from '@mui/icons-material/Smartphone'; // Afegim la icona per smartphone
 import { Link } from 'react-router-dom';
 
 export const mainListItems = (
@@ -25,12 +26,17 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Nova Ruta" />
     </ListItemButton>
-    <ListItemButton component={Link} to="/manual-stop">
+    <ListItemButton component={Link} to="/new-stop">
       <ListItemIcon>
         <AddLocationAltIcon />
       </ListItemIcon>
       <ListItemText primary="Nova Parada" />
-    </ListItemButton >
-    {/*Eliminar els que sobrin estan d'exemple*/}
+    </ListItemButton>
+    <ListItemButton component={Link} to="/mobile-login"> {/* Afegim la nova opció */}
+      <ListItemIcon>
+        <SmartphoneIcon />
+      </ListItemIcon>
+      <ListItemText primary="Versió Mòbil" />
+    </ListItemButton>
   </React.Fragment>
 );

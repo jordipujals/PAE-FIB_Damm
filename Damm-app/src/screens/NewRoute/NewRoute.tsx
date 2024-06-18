@@ -15,7 +15,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { mainListItems } from '../../components/ListItems';
 import Title from '../../components/Title';
 import provinces from '../../components/ProvinceList';
-import BarList from '../../components/BarList';
+import { BarList } from '../../components/BarList';
 import { availableTrucks } from '../../components/TruckList';
 
 const drawerWidth: number = 240;
@@ -142,45 +142,86 @@ const NewRoute = () => {
     return availableTrucks[index];
   };
 
-  const calculateRoutes = (bars: Location[]) => {
+  const nearestNeighbor = (bars: Location[], startBar: Location): Location[] => {
+    const visited = new Set<string>();
+    const route: Location[] = [];
+    let currentBar: Location | null = startBar;
+
+    while (route.length < bars.length && currentBar) {
+      route.push(currentBar);
+      visited.add(currentBar.id);
+
+      let nearestBar: Location | null = null;
+      let minDistance = Infinity;
+
+      bars.forEach(bar => {
+        if (!visited.has(bar.id)) {
+          if (currentBar) {  // Assegurem que currentBar no és null
+            const distance = haversineDistance(
+              parseFloat(currentBar.billingLatitude),
+              parseFloat(currentBar.billingLongitude),
+              parseFloat(bar.billingLatitude),
+              parseFloat(bar.billingLongitude)
+            );
+
+            if (distance < minDistance) {
+              minDistance = distance;
+              nearestBar = bar;
+            }
+          }
+        }
+      });
+
+      currentBar = nearestBar;
+    }
+
+    return route;
+  };
+
+  const createRoute = (provinceBars: Location[], routeTime: string): Route[] => {
     const maxTruckCapacity = 5000;
     const minTruckCapacity = 2000;
     const routes: Route[] = [];
     let truckIndex = 0;
+    let usedBars = new Set<string>();
 
-    const groupedByProvince = bars.reduce((acc, bar) => {
-      if (!acc[bar.province]) {
-        acc[bar.province] = [];
-      }
-      acc[bar.province].push(bar);
-      return acc;
-    }, {} as Record<string, Location[]>);
-
-    const createRoute = (provinceBars: Location[], routeTime: string) => {
+    while (provinceBars.length > 0) {
       let currentRoute: Location[] = [];
       let currentLoad = 0;
 
-      provinceBars.forEach((bar, i) => {
+      const startBar = provinceBars.find(bar => !usedBars.has(bar.id));
+      if (!startBar) break;
+      const orderedBars = nearestNeighbor(provinceBars, startBar);
+
+      orderedBars.forEach((bar) => {
+        if (usedBars.has(bar.id)) return;
         const barLoad = parseInt(bar.litDem);
 
         if (currentLoad + barLoad <= maxTruckCapacity) {
           currentRoute.push(bar);
           currentLoad += barLoad;
+          usedBars.add(bar.id);
         } else {
-          const routeCapacity = currentLoad <= minTruckCapacity ? minTruckCapacity : maxTruckCapacity;
-          const truck = getNextTruck(truckIndex++);
-          routes.push({
-            id: routes.length + 1,
-            province: bar.province,
-            stops: currentRoute,
-            truckCapacity: routeCapacity,
-            beerLoad: currentLoad,
-            remainingCapacity: routeCapacity - currentLoad,
-            truckPlate: truck.matricula,
-            routeTime
-          });
-          currentRoute = [bar];
-          currentLoad = barLoad;
+          if (currentRoute.length > 0) {
+            const routeCapacity = currentLoad <= minTruckCapacity ? minTruckCapacity : maxTruckCapacity;
+            const truck = getNextTruck(truckIndex++);
+            routes.push({
+              id: routes.length + 1,
+              province: currentRoute[0].province,
+              stops: currentRoute,
+              truckCapacity: routeCapacity,
+              beerLoad: currentLoad,
+              remainingCapacity: routeCapacity - currentLoad,
+              truckPlate: truck.matricula,
+              routeTime
+            });
+            currentRoute = [];
+            currentLoad = 0;
+          }
+
+          currentRoute.push(bar);
+          currentLoad += barLoad;
+          usedBars.add(bar.id);
         }
       });
 
@@ -198,15 +239,31 @@ const NewRoute = () => {
           routeTime
         });
       }
-    };
+
+      provinceBars = provinceBars.filter(bar => !usedBars.has(bar.id));
+    }
+
+    return routes;
+  };
+
+  const calculateRoutes = (bars: Location[]) => {
+    const routes: Route[] = [];
+
+    const groupedByProvince = bars.reduce((acc, bar) => {
+      if (!acc[bar.province]) {
+        acc[bar.province] = [];
+      }
+      acc[bar.province].push(bar);
+      return acc;
+    }, {} as Record<string, Location[]>);
 
     if (selectedProvince && selectedProvince !== "") {
       const provinceBars = groupedByProvince[selectedProvince] || [];
       if (provinceBars.length > 0) {
         const morningBars = provinceBars.filter(bar => bar.obertura >= '08:00' && bar.tancament <= '14:00');
         const afternoonBars = provinceBars.filter(bar => bar.obertura >= '15:00' && bar.tancament <= '21:00');
-        createRoute(morningBars, '08:00 - 14:00');
-        createRoute(afternoonBars, '15:00 - 21:00');
+        routes.push(...createRoute(morningBars, '08:00 - 14:00'));
+        routes.push(...createRoute(afternoonBars, '15:00 - 21:00'));
         setShowNoBarsMessage(false);
       } else {
         setShowNoBarsMessage(true);
@@ -218,8 +275,8 @@ const NewRoute = () => {
           if (provinceBars.length > 0) {
             const morningBars = provinceBars.filter(bar => bar.obertura >= '08:00' && bar.tancament <= '14:00');
             const afternoonBars = provinceBars.filter(bar => bar.obertura >= '15:00' && bar.tancament <= '21:00');
-            createRoute(morningBars, '08:00 - 14:00');
-            createRoute(afternoonBars, '15:00 - 21:00');
+            routes.push(...createRoute(morningBars, '08:00 - 14:00'));
+            routes.push(...createRoute(afternoonBars, '15:00 - 21:00'));
           }
         });
         setShowNoBarsMessage(false);
@@ -235,13 +292,20 @@ const NewRoute = () => {
   const handleDesignRoutes = () => {
     setShowNoProvinceSelectedMessage(false);
     setShowNoBarsMessage(false);
-    setDesignedRoutes([]); // Buidar les rutes dissenyades abans de mostrar els missatges
-    if (selectedProvince === "") {
-      setShowNoProvinceSelectedMessage(true);
-      calculateRoutes(filteredBars); // Continuar dissenyant rutes fins i tot si no es selecciona cap província
-    } else {
-      calculateRoutes(filteredBars);
-    }
+
+    // Buidar les rutes dissenyades i els índexs de camions utilitzats abans de recalcular
+    setDesignedRoutes([]);
+    setUsedTruckIndices([]);
+
+    // Forçar un refresc de l'estat abans de recalcular les rutes
+    setTimeout(() => {
+      if (selectedProvince === "") {
+        setShowNoProvinceSelectedMessage(true);
+        calculateRoutes(filteredBars); // Continuar dissenyant rutes fins i tot si no es selecciona cap província
+      } else {
+        calculateRoutes(filteredBars);
+      }
+    }, 0);
   };
 
   const handleRouteSelection = (routeId: number) => {
@@ -256,6 +320,7 @@ const NewRoute = () => {
     const province = event.target.value as string;
     setSelectedProvince(province);
     localStorage.setItem('selectedProvince', province);
+    // No esborrem les rutes dissenyades aquí
   };
 
   return (
@@ -344,8 +409,8 @@ const NewRoute = () => {
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', maxHeight: 500, overflow: 'auto' }}>
                   <Title>Rutes dissenyades</Title>
-                  <TableContainer>
-                    <Table>
+                  <TableContainer sx={{ maxHeight: 300 }}>
+                    <Table stickyHeader>
                       <TableHead>
                         <TableRow>
                           <TableCell>Selecciona</TableCell>
@@ -379,7 +444,16 @@ const NewRoute = () => {
                               <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => navigate(`/route-detail/${route.id}`)}
+                                onClick={() => navigate(`/route-detail/${route.id}`, {
+                                  state: {
+                                    stops: route.stops,
+                                    coords: route.stops.map(s => ({
+                                      lat: s.billingLatitude,
+                                      lng: s.billingLongitude
+                                    })),
+                                    routeTime: route.routeTime // Passar l'horari de la ruta correctament
+                                  }
+                                })}
                               >
                                 Veure detall
                               </Button>

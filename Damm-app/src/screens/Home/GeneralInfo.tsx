@@ -28,21 +28,21 @@ const GeneralInfo = () => {
   const data = {
     Diari: {
       tempsRutaPromig: '6h',
-      nombreParadesPromig: 5,
+      nombreParadesPromig: '3.3',
       quilometresPromig: 740,
       litresEntregats: '8.900',
       litresSobrants: 800,
     },
     Setmanal: {
       tempsRutaPromig: '5h',
-      nombreParadesPromig: 7,
+      nombreParadesPromig: '3.8',
       quilometresPromig: 920,
       litresEntregats: '460.000',
       litresSobrants: '6.000',
     },
     Anual: {
       tempsRutaPromig: '5.5h',
-      nombreParadesPromig: 8,
+      nombreParadesPromig: '3.6',
       quilometresPromig: 895,
       litresEntregats: '208.780.000',
       litresSobrants: '52.000',

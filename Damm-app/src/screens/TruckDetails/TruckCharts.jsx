@@ -2,13 +2,13 @@ import React from 'react';
 import { Grid, Typography, Box } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-const dataTemperatureLleidaTarragona = [
-  { time: '13:00', Tanc: 4.1 },
-  { time: '14:00', Tanc: 4.2 },
-  { time: '15:00', Tanc: 4.3 },
-  { time: '16:00', Tanc: 4.0 },
-  { time: '17:00', Tanc: 4.1 },
-  { time: '18:00', Tanc: 4.2 },
+const dataTemperatureBarcelona = [
+  { time: '04:00', Tanc: 4.1 },
+  { time: '05:00', Tanc: 4.2 },
+  { time: '06:00', Tanc: 4.3 },
+  { time: '07:00', Tanc: 4.0 },
+  { time: '08:00', Tanc: 4.1 },
+  { time: '09:00', Tanc: 4.2 },
 ];
 
 const dataTemperatureBilbao = [
@@ -20,13 +20,13 @@ const dataTemperatureBilbao = [
   { time: '18:00', Tanc: 3.4 },
 ];
 
-const dataBeerTankLleidaTarragona = [{ name: 'Restant (L)', value: 540 }, { name: 'Gastat (L)', value: 1460 }];
+const dataBeerTankBarcelona = [{ name: 'Restant (L)', value: 2484 }, { name: 'Gastat (L)', value: 2516 }];
 const dataBeerTankBilbao = [{ name: 'Restant (L)', value: 0 }, { name: 'Gastat (L)', value: 5000 }];
 const COLORS = ['#0088FE', '#FF8042'];
 
 const TruckCharts = ({ zonaRuta }) => {
-  const dataTemperature = zonaRuta === 'Lleida - Tarragona' ? dataTemperatureLleidaTarragona : dataTemperatureBilbao;
-  const dataBeerTank = zonaRuta === 'Lleida - Tarragona' ? dataBeerTankLleidaTarragona : dataBeerTankBilbao;
+  const dataTemperature = zonaRuta === 'Barcelona' ? dataTemperatureBarcelona : dataTemperatureBilbao;
+  const dataBeerTank = zonaRuta === 'Barcelona' ? dataBeerTankBarcelona : dataBeerTankBilbao;
 
   return (
     <Box sx={{ mb: 2 }}>

@@ -95,14 +95,10 @@ const TruckDetails: React.FC<TruckDetailsProps> = ({ truck }) => {
   }
 
   const stops = truck.Id === 0 ? [
-    { name: "Bar Kentucky (Tarragona)", liters: 300 },
-    { name: "Bar Kram (Tarragona)", liters: 240 },
-    { name: "Bar El Terrat (Valls)", liters: 430 },
-    { name: "Restaurant El Llorer (Igualada)", liters: 345 },
-    { name: "Bar Cal Pep (Cervera)", liters: 260 },
-    { name: "Restaurant El Celler (Tàrrega)", liters: 195 },
-    { name: "Bar del Pla (Lleida)", liters: 210 },
-    { name: "Cafeteria Slàvia (Lleida)", liters: 220 },
+    { name: "Covenant (Vilanova i la Geltru)", liters: 1375 },
+    { name: "Gala Urban Food s.l (Vilanova i la Geltru)", liters: 1141 },
+    { name: "Colegio Fundación Llor (Sant Boi de Llobregat)", liters: 938 },
+    { name: "Eusebio 3 (Barcelona)", liters: 1334 },    
   ] : [
     { name: "Café Iruña", liters: 320 },
     { name: "La Viña del Ensanche", liters: 335 },
@@ -120,17 +116,17 @@ const TruckDetails: React.FC<TruckDetailsProps> = ({ truck }) => {
   };
 
   const truckData = truck.Id === 0 ? {
-    Matricula: "4522-DPR",
+    Matricula: "2679-BRQ",
     driver: "Ricard Salvador Solé",
     contact: "+34 689 901 341",
-    Zona_Ruta: "Lleida - Tarragona",
-    length: 168,
-    startTime: "13:22 - 4/4/2024",
-    endTime: "18:45 - 4/4/2024",
-    completedStops: 3,
-    totalStops: 7,
-    nextStopTime: "54 minuts",
-    beerRemaining: 210,
+    Zona_Ruta: "Barcelona",
+    length: 63,
+    startTime: "8:22 - 18/6/2024",
+    endTime: "10:45 - 18/6/2024",
+    completedStops: 2,
+    totalStops: 4,
+    nextStopTime: "46 minuts",
+    beerRemaining: 2484,
   } : {
     Matricula: "6789-ZXC",
     driver: "Maria López",
@@ -176,10 +172,10 @@ const TruckDetails: React.FC<TruckDetailsProps> = ({ truck }) => {
         <Box component="main" sx={{ backgroundColor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900], flexGrow: 1, overflow: 'auto' }}>
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Paper sx={{ p: 3 }}>
+            <Paper sx={{ p: 1 }}>
               <TruckInfo truck={truckData} />
-              <TruckCharts zonaRuta={truck.Id === 0 ? 'Lleida - Tarragona' : 'Bilbao'} />
-              <TruckMap zonaRuta={truck.Id === 0 ? 'Lleida - Tarragona' : 'Bilbao'} />
+              <TruckCharts zonaRuta={truck.Id === 0 ? 'Barcelona' : 'Bilbao'} />
+              <TruckMap zonaRuta={truck.Id === 0 ? 'Barcelona' : 'Bilbao'} />
               <TruckStops stops={stops} />
             </Paper>
           </Container>
